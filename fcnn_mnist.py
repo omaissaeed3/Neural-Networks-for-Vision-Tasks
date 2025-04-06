@@ -23,3 +23,33 @@ plt.title(f"Sample Image - Label {label}")
 plt.axis("off")
 plt.show()
 
+# Define a simple fully connected network
+class FCNN(nn.Module):
+    def __init__(self):
+        super(FCNN, self).__init__()
+        self.fc1 = nn.Linear(28 * 28, 128)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(128, 10)
+
+    def forward(self, x):
+        x = x.view(-1, 28 * 28)
+        x = self.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Initialize model, loss function, and optimizer
+model = FCNN()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop
+for epoch in range(5):
+    for images, labels in train_loader:
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+    print(f"Epoch {epoch+1}, Loss: {loss.item():.4f}")
+
+    
